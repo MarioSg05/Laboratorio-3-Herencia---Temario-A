@@ -30,7 +30,7 @@ public class Enums {
      * Enumeración para el tipo de turno del personal de enfermería
      */
     public enum TipoTurno {
-        DIURNO,
+        MATUTINO,
         NOCTURNO
     }
 }
