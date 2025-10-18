@@ -4,24 +4,39 @@ import java.text.DecimalFormat;
  * Hereda de TrabajadorMedico e implementa su propia lógica salarial.
  */
 public class DoctorGeneral extends TrabajadorMedico {
-    private String especializacion;
-    private int capacidadPacientesPorDia;
-    private double tarifaConsulta;
-    private int consultasRealizadas;
+    private String especializacionSecundaria;
+    private int limiteConsultasMensual;
+    private double bonoPorConsulta;
+    private int consultasRealizadas; // Campo para registrar actividad
 
     public DoctorGeneral(String nombreCompleto, String departamentoAsignado, int anosExperiencia, double salarioBase,
-                         String especializacion, int capacidadPacientesPorDia, double tarifaConsulta) {
+                         String especializacionSecundaria, int limiteConsultasMensual, double bonoPorConsulta) {
         super(nombreCompleto, departamentoAsignado, anosExperiencia, salarioBase);
-        this.especializacion = especializacion;
-        this.capacidadPacientesPorDia = capacidadPacientesPorDia;
-        this.tarifaConsulta = tarifaConsulta;
-        this.consultasRealizadas = 0;
+        this.especializacionSecundaria = especializacionSecundaria;
+        this.limiteConsultasMensual = limiteConsultasMensual;
+        this.bonoPorConsulta = bonoPorConsulta;
+        this.consultasRealizadas = 0; 
     }
 
+    // Polimorfismo: Implementación específica de cálculo salarial
     @Override
     public double calcularSalario() {
-        // Doctores: Salario base + (número de consultas × tarifa)
-        return getSalarioBase() + (this.consultasRealizadas * this.tarifaConsulta);
+        double salarioTotal = getSalarioBase();
+        
+        // Bonificación por consultas realizadas hasta el límite
+        if (consultasRealizadas > 0) {
+            int consultasConBono = Math.min(consultasRealizadas, limiteConsultasMensual);
+            salarioTotal += consultasConBono * bonoPorConsulta;
+        }
+        
+        return salarioTotal;
+    }
+
+    /**
+     * Método para incrementar el contador de consultas realizadas.
+     */
+    public void incrementarConsultas(int cantidad) {
+        this.consultasRealizadas += cantidad;
     }
 
     @Override
@@ -29,20 +44,17 @@ public class DoctorGeneral extends TrabajadorMedico {
         DecimalFormat df = new DecimalFormat("#,##0.00");
         return super.toString() + 
                " | Tipo: Doctor General" +
-               " | Especialización: " + especializacion +
-               " | Tarifa Consulta: $" + df.format(tarifaConsulta) +
-               " | Consultas/Mes: " + consultasRealizadas;
+               " | Espec. Sec.: " + especializacionSecundaria +
+               " | Bono por Consulta: $" + df.format(bonoPorConsulta) +
+               " | Cons. Realizadas: " + consultasRealizadas + " (Límite: " + limiteConsultasMensual + ")";
     }
-    
-    public String getEspecializacion() { return especializacion; }
-    public int getCapacidadPacientesPorDia() { return capacidadPacientesPorDia; }
-    public double getTarifaConsulta() { return tarifaConsulta; }
+
+    public String getEspecializacionSecundaria() { return especializacionSecundaria; }
+    public int getLimiteConsultasMensual() { return limiteConsultasMensual; }
+    public double getBonoPorConsulta() { return bonoPorConsulta; }
     public int getConsultasRealizadas() { return consultasRealizadas; }
 
-    public void incrementarConsultasRealizadas(int consultas) {
-        this.consultasRealizadas += consultas;
-    }
-    
-    public void setEspecializacion(String especializacion) { this.especializacion = especializacion; }
-    public void setTarifaConsulta(double tarifaConsulta) { this.tarifaConsulta = tarifaConsulta; }
+    public void setEspecializacionSecundaria(String especializacionSecundaria) { this.especializacionSecundaria = especializacionSecundaria; }
+    public void setLimiteConsultasMensual(int limiteConsultasMensual) { this.limiteConsultasMensual = limiteConsultasMensual; }
+    public void setBonoPorConsulta(double bonoPorConsulta) { this.bonoPorConsulta = bonoPorConsulta; }
 }

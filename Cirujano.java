@@ -1,29 +1,35 @@
 import java.text.DecimalFormat;
 
 /**
- * Hereda de TrabajadorMedico e implementa su propia lógica salarial.
+ * Hereda de TrabajadorMedico e implementa su propia lógica salarial basada en horas de cirugía.
  */
 public class Cirujano extends TrabajadorMedico {
-    private String tiposOperaciones;
-    private double horasCirugiaDisponibles;
-    private double bonoPorRiesgo;
-    private double horasCirugiaRealizadas;
+    private String tiposCirugia;
+    private double bonoPorHoraCirugia;
+    private double horasCirugiaAcumuladas; // Campo para registrar actividad
 
     public Cirujano(String nombreCompleto, String departamentoAsignado, int anosExperiencia, double salarioBase,
-                    String tiposOperaciones, double horasCirugiaDisponibles, double bonoPorRiesgo) {
+                    String tiposCirugia, double horasCirugiaAcumuladas, double bonoPorHoraCirugia) {
         super(nombreCompleto, departamentoAsignado, anosExperiencia, salarioBase);
-        this.tiposOperaciones = tiposOperaciones;
-        this.horasCirugiaDisponibles = horasCirugiaDisponibles;
-        this.bonoPorRiesgo = bonoPorRiesgo;
-        this.horasCirugiaRealizadas = 0;
+        this.tiposCirugia = tiposCirugia;
+        this.horasCirugiaAcumuladas = horasCirugiaAcumuladas;
+        this.bonoPorHoraCirugia = bonoPorHoraCirugia;
     }
 
-    // Polimorfismo  de cálculo salarial
+    // Polimorfismo: Implementación específica de cálculo salarial
     @Override
     public double calcularSalario() {
-        // Cirujanos: Salario base + (horas de cirugía × Tarifa por hora fija 150.0) + bonos por riesgo
-        double tarifaPorHora = 150.00;
-        return getSalarioBase() + (this.horasCirugiaRealizadas * tarifaPorHora) + this.bonoPorRiesgo;
+        // Cirujano: Salario base + bono por horas de cirugía acumuladas.
+        double salarioTotal = getSalarioBase();
+        salarioTotal += horasCirugiaAcumuladas * bonoPorHoraCirugia;
+        return salarioTotal;
+    }
+    
+    /**
+     * Método para incrementar el contador de horas de cirugía.
+     */
+    public void incrementarHorasCirugia(double horas) {
+        this.horasCirugiaAcumuladas += horas;
     }
 
     @Override
@@ -31,19 +37,15 @@ public class Cirujano extends TrabajadorMedico {
         DecimalFormat df = new DecimalFormat("#,##0.00");
         return super.toString() + 
                " | Tipo: Cirujano" +
-               " | Ops: " + tiposOperaciones.substring(0, Math.min(tiposOperaciones.length(), 20)) + "..." +
-               " | Bono Riesgo: $" + df.format(bonoPorRiesgo) +
-               " | Horas Realizadas/Mes: " + horasCirugiaRealizadas;
+               " | Cirugías: " + tiposCirugia +
+               " | Bono/Hora: $" + df.format(bonoPorHoraCirugia) +
+               " | Horas Cirugía: " + new DecimalFormat("#0.0").format(horasCirugiaAcumuladas);
     }
-    
-    public String getTiposOperaciones() { return tiposOperaciones; }
-    public double getBonoPorRiesgo() { return bonoPorRiesgo; }
-    public double getHorasCirugiaRealizadas() { return horasCirugiaRealizadas; }
 
-    public void incrementarHorasCirugiaRealizadas(double horas) {
-        this.horasCirugiaRealizadas += horas;
-    }
-    
-    public void setTiposOperaciones(String tiposOperaciones) { this.tiposOperaciones = tiposOperaciones; }
-    public void setBonoPorRiesgo(double bonoPorRiesgo) { this.bonoPorRiesgo = bonoPorRiesgo; }
+    public String getTiposCirugia() { return tiposCirugia; }
+    public double getBonoPorHoraCirugia() { return bonoPorHoraCirugia; }
+    public double getHorasCirugiaAcumuladas() { return horasCirugiaAcumuladas; }
+
+    public void setTiposCirugia(String tiposCirugia) { this.tiposCirugia = tiposCirugia; }
+    public void setBonoPorHoraCirugia(double bonoPorHoraCirugia) { this.bonoPorHoraCirugia = bonoPorHoraCirugia; }
 }
